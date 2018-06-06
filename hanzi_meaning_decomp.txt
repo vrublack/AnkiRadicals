@@ -1061,7 +1061,7 @@ Kanji,Meaning,Radicals
 徒,"disciple","step + run"
 姆,"childs governess","woman + mother"
 杨,"willow","tree"
-齐,"6576656E2C20756E69666F726D2C206F6620657175616C206C656E677468","even"
+齐,"orderly","even"
 赛,"compete","roof + 廿 + two hands + shell"
 趣,"what attracts ones attention","run + ear + again"
 曲,"crooked","crooked"
