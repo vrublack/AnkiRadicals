@@ -104,6 +104,9 @@ with open('hanzi_meaning_decomp.txt', 'w') as out:
         dec = decompose(hanzi, keep_duplicates=False)
         if len(dec) == 0:
             print('WARNING')
-        out.write('{},"{}","{}"\n'.format(hanzi, meaning, explain_decomp(dec)))
+        decomp_expl = explain_decomp(dec)
+        decomp_expl = decomp_expl.replace("'", "")
+        meaning = meaning.replace("'", "")
+        out.write('{},"{}","{}"\n'.format(hanzi, meaning, decomp_expl))
 
 print('Done.')
