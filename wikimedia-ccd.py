@@ -67,31 +67,43 @@ def simplify_meaning(meaning_str):
     # the purpose of this is not to provide a comprehensive explanation
     # but just to aid with memorization
     meanings = meaning_str.split(';')
-    if len(meanings) > 2:
-        meanings[:] = meanings[:2]
+    if len(meanings) > 1:
+        meanings[:] = meanings[:1]
     for i, m in enumerate(meanings):
         synonyms = m.split(',')
         meanings[i] = synonyms[0]
     return ','.join(meanings)
 
 
+characters = {}
 # from https://docs.google.com/spreadsheets/d/1j5-67vdCUeAuIzmikeCgNmXaFZTuXtT4vesjnrqSOjI/edit#gid=512136205 (linked from https://ankiweb.net/shared/info/39888802)
 with open('Copy of Most Common 3000 Chinese - ANKI with Traditional.csv') as f:
-    with open('hanzi_meaning_decomp.txt', 'w') as out:
-        out.write('Kanji,Meaning,Radicals\n')
         for l in csv.reader(f.readlines(), quotechar='"', delimiter=',',
                             quoting=csv.QUOTE_ALL, skipinitialspace=True):
             hanzi = l[0]
             meaning = simplify_meaning(l[8])
-            dec = decompose(hanzi, keep_duplicates=False)
-            if len(dec) == 0:
-                print('WARNING')
-            decomp_c = []
-            for radical in dec:
-                if radical in radicals:
-                    decomp_c.append('{} ({})'.format(radical, radicals[radical]))
-                else:
-                    decomp_c.append(radical)
-            out.write('{},"{}","{}"\n'.format(hanzi, meaning, ' + '.join(decomp_c)))
+            characters[hanzi] = meaning
+
+def explain_decomp(dec):
+    decomp_c = []
+    for radical in dec:
+        # use the radical explanation, if not available use the character explanation,
+        # if not available just the hanzi itself
+        if radical in radicals:
+            decomp_c.append(radicals[radical])
+        elif radical in characters:
+            decomp_c.append(characters[radical])
+        else:
+            decomp_c.append(radical)
+    return ' + '.join(decomp_c)
+
+with open('hanzi_meaning_decomp.txt', 'w') as out:
+    out.write('Kanji,Meaning,Radicals\n')
+    for hanzi in characters.keys():
+        meaning = characters[hanzi]
+        dec = decompose(hanzi, keep_duplicates=False)
+        if len(dec) == 0:
+            print('WARNING')
+        out.write('{},"{}","{}"\n'.format(hanzi, meaning, explain_decomp(dec)))
 
 print('Done.')
