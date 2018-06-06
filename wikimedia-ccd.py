@@ -90,12 +90,15 @@ def explain_decomp(dec):
         # use the radical explanation, if not available use the character explanation,
         # if not available just the hanzi itself
         if radical in radicals:
-            decomp_c.append(radicals[radical])
+            decomp_c.append('{} ({})'.format(radical, radicals[radical]))
         elif radical in characters:
-            decomp_c.append(characters[radical])
+            decomp_c.append('{} ({})'.format(radical, characters[radical]))
         else:
             decomp_c.append(radical)
-    return ' + '.join(decomp_c)
+    #if len(decomp_c) == 1 and dec[0] in characters and dec[0] not in radicals:
+    #    return ''
+    else:
+        return ' + '.join(decomp_c)
 
 with open('hanzi_meaning_decomp.txt', 'w') as out:
     out.write('Kanji,Meaning,Radicals\n')
