@@ -62,6 +62,17 @@ def _decompose(hanzi, l):
 print('Loaded Wikimedia CCD.')
 
 
+def simplify_meaning(meaning_str):
+    # heavily simplify string, sometimes missing a few meanings
+    # the purpose of this is not to provide a comprehensive explanation
+    # but just to aid with memorization
+    meanings = meaning_str.split(';')
+    if len(meanings) > 2:
+        meanings[:] = meanings[:2]
+    for i, m in enumerate(meanings):
+        synonyms = m.split(',')
+        meanings[i] = synonyms[0]
+    return ','.join(meanings)
 
 
 # from https://docs.google.com/spreadsheets/d/1j5-67vdCUeAuIzmikeCgNmXaFZTuXtT4vesjnrqSOjI/edit#gid=512136205 (linked from https://ankiweb.net/shared/info/39888802)
@@ -71,14 +82,14 @@ with open('Copy of Most Common 3000 Chinese - ANKI with Traditional.csv') as f:
         for l in csv.reader(f.readlines(), quotechar='"', delimiter=',',
                             quoting=csv.QUOTE_ALL, skipinitialspace=True):
             hanzi = l[0]
-            meaning = l[8]
+            meaning = simplify_meaning(l[8])
             dec = decompose(hanzi, keep_duplicates=False)
             if len(dec) == 0:
                 print('WARNING')
             decomp_c = []
             for radical in dec:
                 if radical in radicals:
-                    decomp_c.append('{} ({})'.format(radicals[radical], radical))
+                    decomp_c.append('{} ({})'.format(radical, radicals[radical]))
                 else:
                     decomp_c.append(radical)
             out.write('{},"{}","{}"\n'.format(hanzi, meaning, ' + '.join(decomp_c)))
