@@ -85,20 +85,21 @@ with open('Copy of Most Common 3000 Chinese - ANKI with Traditional.csv') as f:
             characters[hanzi] = meaning
 
 def explain_decomp(dec):
-    decomp_c = []
+    decomp_text = []
+    decomp_char = []
     for radical in dec:
+        decomp_char.append(radical)
         # use the radical explanation, if not available use the character explanation,
         # if not available just the hanzi itself
         if radical in radicals:
-            decomp_c.append('{} ({})'.format(radical, radicals[radical]))
+            decomp_text.append(radicals[radical])
         elif radical in characters:
-            decomp_c.append('{} ({})'.format(radical, characters[radical]))
+            decomp_text.append(characters[radical])
         else:
-            decomp_c.append(radical)
+            decomp_text.append(radical)
     #if len(decomp_c) == 1 and dec[0] in characters and dec[0] not in radicals:
     #    return ''
-    else:
-        return ' + '.join(decomp_c)
+    return '{} ({})'.format(' + '.join(decomp_text), ' + '.join(decomp_char))
 
 with open('hanzi_meaning_decomp.txt', 'w') as out:
     out.write('Kanji,Meaning,Radicals\n')
