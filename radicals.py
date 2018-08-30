@@ -9,14 +9,14 @@ import csv
 ### ANKI 2.0 PLUGIN
 
 hanzi2rad = {}
-with open("hanzi_meaning_decomp.txt") as f:
+with open('/Users/valentin/PycharmProjects/ChineseRadicalCrawler/hanzi_meaning_decomp.txt') as f:
     ls = f.readlines()[1:]
     for l in csv.reader(ls, quotechar='"', delimiter=',',
                         quoting=csv.QUOTE_ALL, skipinitialspace=True):
         hanzi2rad[l[0].decode('utf-8')] = "{} ({}): {}".format(l[0], l[1], l[2]).decode('utf-8')
 
 kanji2rad = {}
-with open("kanji_meaning_decomp.csv") as f:
+with open('/Users/valentin/PycharmProjects/ChineseRadicalCrawler/kanji_meaning_decomp.csv') as f:
     ls = f.readlines()[1:]
     for l in csv.reader(ls, quotechar='"', delimiter=',',
                         quoting=csv.QUOTE_ALL, skipinitialspace=True):
@@ -30,8 +30,22 @@ def writeRadicalFieldHSK():
         note = card.note()
         explained = []
         for c in note['Simplified']:
-            if c in kanji2rad:
-                explained.append(kanji2rad[c])
+            if c in hanzi2rad:
+                explained.append(hanzi2rad[c])
+        note['Radicals'] = '<br/>'.join(explained)
+        note.flush()
+
+    mw.reset()
+
+def writeRadicalFieldChineseProgress():
+    ids = mw.col.findCards('mid:1527782122222')
+    for id in ids:
+        card = mw.col.getCard(id)
+        note = card.note()
+        explained = []
+        for c in note['Expression']:
+            if c in hanzi2rad:
+                explained.append(hanzi2rad[c])
         note['Radicals'] = '<br/>'.join(explained)
         note.flush()
 
@@ -67,9 +81,27 @@ def writeRadicalFieldJapSent():
 
     mw.reset()
 
+def writeRadicalFieldJap10k():
+    ids = mw.col.findCards('mid:1342706442509')
+    for id in ids:
+        card = mw.col.getCard(id)
+        note = card.note()
+        explained = []
+        for c in note['Vocab']:
+            if c in kanji2rad:
+                explained.append(kanji2rad[c])
+        note['Radicals'] = '<br/>'.join(explained)
+        note.flush()
+
+    mw.reset()
+
 
 action = QAction("Write radicals HSK (Mandarin Vocab)", mw)
 action.triggered.connect(writeRadicalFieldHSK)
+mw.form.menuTools.addAction(action)
+
+action = QAction("Write Chinese progress", mw)
+action.triggered.connect(writeRadicalFieldChineseProgress)
 mw.form.menuTools.addAction(action)
 
 action = QAction("Write radicals Japanese Vocabulary", mw)
@@ -78,4 +110,8 @@ mw.form.menuTools.addAction(action)
 
 action = QAction("Write radicals Japanese Sentences", mw)
 action.triggered.connect(writeRadicalFieldJapSent)
+mw.form.menuTools.addAction(action)
+
+action = QAction("Write radicals Japanese 10k", mw)
+action.triggered.connect(writeRadicalFieldJap10k)
 mw.form.menuTools.addAction(action)
